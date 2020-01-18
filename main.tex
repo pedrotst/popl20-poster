@@ -1,4 +1,9 @@
-\documentclass[25pt, a0paper, portrait, svgnames]{tikzposter}
+\documentclass[25pt,
+a0paper,
+portrait,
+svgnames,
+blockverticalspace=0.3cm
+]{tikzposter}
 %\usepackage{extsizes}
 \usepackage{xcolor}
 \usepackage{graphicx}
@@ -48,7 +53,7 @@ normalization.
 
 This work aims to assess how much these features
 are actually necessary in practice. To achieve this we build
-\textbf{Coquedille, a compiler from a subset of Gallina to Cedille}, and
+\textbf{Coquedille, a compiler from a subset of Gallina to Cedille\textsuperscript{1}}, and
 probe it by translating as much as possible of the Software Foundations Series.
 
 % The main goal of this work is to determine how much these features are actually useful
@@ -94,62 +99,62 @@ Yep! Here are two cherrypicked examples for you:
 
 }
 
- \block{So you are saying this Cedille has none of this?}{
+ \block{So you are saying Cedille has none of this?}{
  Exactly! Cedille has \textbf{no large eliminations}, and \textbf{no primitive datatypes}, and like Haskell and Agda,
- \textbf{no large eliminations}, all of this implemented in an extrinsic type theory.\\
+ \textbf{no universe universe hierarchy}, all of this implemented in an extrinsic type theory.\\
  
  \textit{Ask me how can we get away without datatypes.}
  }
  
  
-% \block{Let's talk about Coquedille}{
-% Coquedille is a translater from Coq to Cedille using metacoq
-% 
-% here we talk about useful. How far we can get with these features. What is our vehicle?
-% 
-% Well, people like Coq, so we can probe existing coq developing if they have these stuff, we have started implementing coquedille to answer this question.
-% 
-% }
+\block{Let's talk about Coquedille}{
+  Of course, that's why we're here for!
+
+  Coquedille is a translater from Coq to Cedille.
+  \textbf{We implement Coquedille in Coq} itself, this allows us to \textbf{use metacoq} to access the abstract syntax tree of the gallina terms.
+
+  Since Coq and Cedille are based on the Calculus of Constructors, most of the translation is straightforward!
 
 
-\block{Wait a second... Extrinsic Type Theory?}{
-Oh right, I knew I was forgeting something.
-There is one more important mismatch between Coq and Cedille: \textbf{Coq is an Intrinsic Type theory},
-but \textbf{Cedille is an Extrinsic Type Theory}.
+    % here we talk about useful. How far we can get with these features. What is our vehicle?
 
-The key difference is that in an Intrinsic Type Theory we would write $\bm{\lambda x: T . e}$,
- while in an Extrinsic Type Theory, it would be $\bm{\lambda x . e}$.
-I know, it seems like a minute difference but it leads to huge consequences, e.g. type uniqueness and decidability of type checking.
-In any case, this mismatch opens up the interesting question of how these two flavours of type theories will
-interact with one another soundly.
+    % Well, people like Coq, so we can probe existing coq developing if they have these stuff, we have started implementing coquedille to answer this question.
 }
+
+
+% \block{Wait a second... Extrinsic Type Theory?}{
+% Oh right, I knew I was forgeting something.
+% There is one more important mismatch between Coq and Cedille: \textbf{Coq is an Intrinsic Type theory},
+% but \textbf{Cedille is an Extrinsic Type Theory}.
+
+% The key difference is that in an Intrinsic Type Theory we would write $\bm{\lambda x: T . e}$,
+%  while in an Extrinsic Type Theory, it would be $\bm{\lambda x . e}$.
+% I know, it seems like a minute difference but it leads to huge consequences, e.g. type uniqueness and decidability of type checking.
+% In any case, this mismatch opens up the interesting question of how these two flavours of type theories will
+% interact with one another soundly.
+% }
 
 
 \column{.03}
 
 \column{.47}
-\block{All sounds nice and good, but do you have any results yet?}{
+\block{Ok... What can you do with it?}{
 
 
 \begin{tabular}[t]{p{.6\linewidth}r}
     \begin{minipage}[t]{.9\linewidth}
-    \textbf{We implement Coquedille in Coq} itself. And we get access to the syntax of the terms by \textbf{using Metacoq}.
-    
-    
-Let me show you things working by \textbf{translating a non-trivial proof: List nil and Vector vnil are not the same}.
 
-Since we are comparing terms of two different types we cannot use 
-the regular equality, so we use the JMeq heterogeneous equality instead (notated as {\small'$\sim=$'}).
+      Here is an example for you: let's \textbf{translate the following non-trivial proof:
+      List nil and Vector vnil are not the same}.
+
+    Since we are comparing terms of two different types we cannot use
+    the regular equality, so we use the JMeq heterogeneous equality instead (notated as {\small'$\sim=$'}).
 
     Don't waste your time trying to understand this proof! All I want you to notice is that 
     \textbf{the highlighted part is a large elimination}.\\
-    
-    \textit{If you want to see the proof written with tactics, take a look at the project github at\footnotemark{}}
-    
-    \footnotemark{}\footnotemark{}
-    \footnotemark{}\footnotemark{}
-    \footnotemark{}\footnotemark{}
-    
+
+    \textit{If you want to see the proof written with tactics, take a look at the project github\textsuperscript{2}}
+
     \end{minipage}
     &
     \begin{minipage}[t]{0.50\linewidth}
@@ -165,8 +170,11 @@ the regular equality, so we use the JMeq heterogeneous equality instead (notated
  We use a nice trick of translating it to
  a Cedille term $\bm{\delta}$, which basically 
  \textbf{checks if two lambda terms are \bm{$\beta\eta$}-equivalent} via the
- Bohm-out algorithm. If the terms being compared are not $\beta\eta$-equivalent, $\delta$
- allows us to apply the explosion principle to prove anything.
+ Bohm-out algorithm\textsuperscript{3}. If the terms being compared are not $\beta\eta$-equivalent, $\delta$
+ allows us to apply the explosion principle
+ %redundancy here is intentional%
+ to prove anything.
+ %------------------------------%
  In order to do this translation, we first prove a lemma
  relating Coq equality \lstinline[language=Coq, basicstyle=\large]{eq} to Cedille
  built-in equality \Verb[fontsize=\normalsize]+\{x ≃ y\}+\\
@@ -177,17 +185,23 @@ Now we can translate the large elimination by
 using $\delta$ on the generated proof that \lstinline[language=Coq, basicstyle=\large]{nil = cons a nil} (look at the type of H4 at the proof above).\\
 \VerbatimInput[fontsize=\small,commandchars=+\^\&]{cedille-proof.ced}
 }
+
 \block{Next Steps}{
 \begin{itemize}
     \item Translate induction and recursion
     \item Check how much of Software Foundations we are able
     to translate even with these shortcomings
     \item Prove the correctness of the translation
+    \begin{itemize}
+      \item Translation Validation
+      \item Logical Relations
+      \item ???
+    \end{itemize}
 \end{itemize}
 }
 
-\block{Questions?}{
-Insights? Inconsistencies? Doubts? Feedback?
+\block{Wait, I still have a question}{
+  I'm more than happy to hear any insights, doubts, feedbacks, or I don't know, ``hi''s.
 }
 
 % \block{Shameless Plug}{
@@ -195,12 +209,20 @@ Insights? Inconsistencies? Doubts? Feedback?
 % }
 
 \block{Citations}{
-\setcounter{footnote}{0}%
-\printfootnote{ipsum} % ipsum is the text of the footnote
-    
-\printfootnote{\mbox{\url{https://github.com/pedrotst/coquedille}}}.
+\textsuperscript{1} {\mbox{\url{https://github.com/cedille/cedille}}}.
+
+\textsuperscript{2} {\mbox{\url{https://github.com/pedrotst/coquedille}}}.
+
+\textsuperscript{3} H. Barendregt, The Lambda Calculus; Its Syntax and Semantics.
+
+
 }
 
 \end{columns}
 
 \end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:
