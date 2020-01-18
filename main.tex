@@ -45,16 +45,16 @@ blockverticalspace=0.3cm
 \begin{columns}
 
 \column{.45}
-\block{There are too many posters here, why should I read yours?}{
+\block{Are you also hearing Ode to Joy?}{
 \textbf{Universe Hierarchy}, \textbf{datatypes} and \textbf{large elimination} are well known features 
 of modern theorem provers. However, they are also known to
 \textbf{complicate metatheorical properties}, such as soundness, type inference, and
 normalization.
 
 This work aims to assess how much these features
-are actually necessary in practice. To achieve this we build
+are actually necessary in practice. To achieve this we are building
 \textbf{Coquedille, a compiler from a subset of Gallina to Cedille\textsuperscript{1}}, and
-probe it by translating as much as possible of the Software Foundations Series.
+we will probe it by translating as much as possible of the Software Foundations Series.
 
 % The main goal of this work is to determine how much these features are actually useful
 % in practice. We aim to achieve this by building \textbf{Coquedille, a compiler
@@ -67,7 +67,7 @@ $$ \Delta = \{ x \ | \ x \notin x \}$$
 The million dollar question is: $\Delta \in \Delta$?
 
 If $\Delta \in \Delta$ then $\Delta \notin \Delta$,
-conversely, if $\Delta \notin \Delta$ then $\Delta \in \Delta$!.
+and conversely, if $\Delta \notin \Delta$ then $\Delta \in \Delta$!.
 This contradiction indicates that such $\bm{\Delta}$ \textbf{simply cannot exist}.
 
 This means that a sound theory needs to disallow such definitions. \textbf{One fix to this problem is to only allow definitions to quantify over terms smaller than what is being defined.}
@@ -78,7 +78,7 @@ Another fix to this problem is to disallow these definitions altogether, resulti
 }
 
 \block{Cool, what about Large Eliminations?}{
-\textbf{Large Eliminations are function that computes types from terms.}
+\textbf{Large Eliminations are functions that computes types from terms.}
 The canonical example is computing a proposition from an arbitrary term, such as:
 \lstinputlisting[language=Coq]{bool_to_prop.v}
 See right for an example of these in action.
@@ -100,20 +100,25 @@ Yep! Here are two cherrypicked examples for you:
 }
 
  \block{So you are saying Cedille has none of this?}{
- Exactly! Cedille has \textbf{no large eliminations}, and \textbf{no primitive datatypes}, and like Haskell and Agda,
- \textbf{no universe universe hierarchy}, all of this implemented in an extrinsic type theory.\\
+ Right. Cedille has \textbf{no large eliminations}, and \textbf{no primitive datatypes}, and like Haskell and Agda,
+ \textbf{no universe universe hierarchy}\\
  
  \textit{Ask me how can we get away without datatypes.}
  }
  
  
 \block{Let's talk about Coquedille}{
-  Of course, that's why we're here for!
+Coquedille is a translater from Coq to Cedille. \textbf{We implement Coquedille
+in Coq} itself, this allows us to \textbf{use metacoq\textsuperscript{2}} to
+access the abstract syntax tree of the gallina terms.
 
-  Coquedille is a translater from Coq to Cedille.
-  \textbf{We implement Coquedille in Coq} itself, this allows us to \textbf{use metacoq} to access the abstract syntax tree of the gallina terms.
+\textbf{The translation is mostly straightforward}.
+The main challenge is that, in Coq, kinds, types and terms are syntatically the same thing. In Cedille we have to clearly differentiate between them.
 
-  Since Coq and Cedille are based on the Calculus of Constructors, most of the translation is straightforward!
+Our main approach is to access the metacoq AST and translate it to the cedille
+counterpart by using the monadic constructs provided by ext-lib\textsuperscript{3}. The main challange
+is to come up with a sound approach to decide wether a gallina term lives in a
+cedille term, type or kind.
 
 
     % here we talk about useful. How far we can get with these features. What is our vehicle?
@@ -138,7 +143,7 @@ Yep! Here are two cherrypicked examples for you:
 \column{.03}
 
 \column{.47}
-\block{Ok... What can you do with it?}{
+\block{Ok... And what can you do with it?}{
 
 
 \begin{tabular}[t]{p{.6\linewidth}r}
@@ -153,7 +158,7 @@ Yep! Here are two cherrypicked examples for you:
     Don't waste your time trying to understand this proof! All I want you to notice is that 
     \textbf{the highlighted part is a large elimination}.\\
 
-    \textit{If you want to see the proof written with tactics, take a look at the project github\textsuperscript{2}}
+    \textit{If you want to see the proof written with tactics, take a look at the project github\textsuperscript{3}}.
 
     \end{minipage}
     &
@@ -166,11 +171,11 @@ Yep! Here are two cherrypicked examples for you:
 
 
  \block{Hey! You just said Cedille doesn't support Large Eliminations!}{
- Preciselly! How can we translate it then?
+ And it doesn't! But worry not, not all is doomed.
  We use a nice trick of translating it to
  a Cedille term $\bm{\delta}$, which basically 
  \textbf{checks if two lambda terms are \bm{$\beta\eta$}-equivalent} via the
- Bohm-out algorithm\textsuperscript{3}. If the terms being compared are not $\beta\eta$-equivalent, $\delta$
+ Bohm-out algorithm\textsuperscript{4}. If the terms being compared are not $\beta\eta$-equivalent, $\delta$
  allows us to apply the explosion principle
  %redundancy here is intentional%
  to prove anything.
@@ -208,12 +213,16 @@ using $\delta$ on the generated proof that \lstinline[language=Coq, basicstyle=\
 % I'm looking for summer internships!
 % }
 
-\block{Citations}{
+\block{Useful links and citations}{
 \textsuperscript{1} {\mbox{\url{https://github.com/cedille/cedille}}}.
 
-\textsuperscript{2} {\mbox{\url{https://github.com/pedrotst/coquedille}}}.
+\textsuperscript{2} {\mbox{\url{https://github.com/MetaCoq/metacoq}}}.
 
-\textsuperscript{3} H. Barendregt, The Lambda Calculus; Its Syntax and Semantics.
+\textsuperscript{3} {\mbox{\url{https://github.com/coq-community/coq-ext-lib}}}.
+
+\textsuperscript{4} {\mbox{\url{https://github.com/pedrotst/coquedille}}}.
+
+\textsuperscript{5} H. Barendregt, The Lambda Calculus; Its Syntax and Semantics.
 
 
 }
