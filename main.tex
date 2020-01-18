@@ -113,12 +113,11 @@ in Coq} itself, this allows us to \textbf{use metacoq\textsuperscript{2}} to
 access the abstract syntax tree of the gallina terms.
 
 \textbf{The translation is mostly straightforward}.
-The main challenge is that, in Coq, kinds, types and terms are syntatically the same thing. In Cedille we have to clearly differentiate between them.
+The main challenge is that, in Coq, kinds, types and terms are syntatically the same. In Cedille we have to clearly differentiate between them. With this in mind
+we access the metacoq AST and translate it to the Cedille
+counterpart by using the monadic constructs provided by ext-lib\textsuperscript{3}.
 
-Our main approach is to access the metacoq AST and translate it to the cedille
-counterpart by using the monadic constructs provided by ext-lib\textsuperscript{3}. The main challange
-is to come up with a sound approach to decide wether a gallina term lives in a
-cedille term, type or kind.
+We aim to measure the effectivenes of the tool by translating as many theorems as possible from the Software Foundation Series \textsuperscript{4}.
 
 
     % here we talk about useful. How far we can get with these features. What is our vehicle?
@@ -158,7 +157,7 @@ cedille term, type or kind.
     Don't waste your time trying to understand this proof! All I want you to notice is that 
     \textbf{the highlighted part is a large elimination}.\\
 
-    \textit{If you want to see the proof written with tactics, take a look at the project github\textsuperscript{3}}.
+    \textit{If you want to see the proof written with tactics, take a look at the project github\textsuperscript{4}}.
 
     \end{minipage}
     &
@@ -175,7 +174,7 @@ cedille term, type or kind.
  We use a nice trick of translating it to
  a Cedille term $\bm{\delta}$, which basically 
  \textbf{checks if two lambda terms are \bm{$\beta\eta$}-equivalent} via the
- Bohm-out algorithm\textsuperscript{4}. If the terms being compared are not $\beta\eta$-equivalent, $\delta$
+ Bohm-out algorithm\textsuperscript{5}. If the terms being compared are not $\beta\eta$-equivalent, $\delta$
  allows us to apply the explosion principle
  %redundancy here is intentional%
  to prove anything.
@@ -217,6 +216,8 @@ using $\delta$ on the generated proof that \lstinline[language=Coq, basicstyle=\
 \textsuperscript{1} {\mbox{\url{https://github.com/cedille/cedille}}}.
 
 \textsuperscript{2} {\mbox{\url{https://github.com/MetaCoq/metacoq}}}.
+
+\textsuperscript{3} {\mbox{\url{https://softwarefoundations.cis.upenn.edu/}}}.
 
 \textsuperscript{3} {\mbox{\url{https://github.com/coq-community/coq-ext-lib}}}.
 
