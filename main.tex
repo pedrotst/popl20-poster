@@ -1,0 +1,207 @@
+\documentclass[25pt, a0paper, portrait, svgnames]{tikzposter}
+%\usepackage{extsizes}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{listingsutf8}
+\usepackage{lstlinebgrd}
+\usepackage{verbatim}
+\usepackage{fancyvrb}
+\usepackage{amsmath,amsfonts,amsthm,bm} % Math packages
+\usepackage{CedilleVerbatim}
+\usepackage{url}
+
+
+\input{lstcoq.sty}
+
+\newcommand{\inlinecoq}[1]{\lstinline[breaklines=true, language=Coq]|#1|}
+\tikzposterlatexaffectionproofoff
+
+\let\thempfootnote\thefootnote%http://tex.stackexchange.com/questions/956/footnotemark-and-footnotetext-in-minipage#959
+\newcommand\printfootnote[1]{
+\addtocounter{footnote}{1}%
+\footnotetext{#1}}
+
+\title{How small can we make a useful type theory?}
+\author{Pedro da Costa Abreu Jr.}
+\institute{Purdue University, USA \\ pdacost@purdue.edu}
+
+% \usetheme{Desert}
+\usetheme{Simple}
+
+\begin{document}
+
+\maketitle
+
+% \node[anchor=east] at (TP@title.east) {\includegraphics[width=0.20\linewidth]{images/purdue-logo.png}};
+
+% \block{The One Million Dollar Question}{
+% \fontsize{25pt}{60pt}\selectfont
+
+\begin{columns}
+
+\column{.45}
+\block{There are too many posters here, why should I read yours?}{
+\textbf{Universe Hierarchy}, \textbf{datatypes} and \textbf{large elimination} are well known features 
+of modern theorem provers. However, they are also known to
+\textbf{complicate metatheorical properties}, such as soundness, type inference, and
+normalization.
+
+This work aims to assess how much these features
+are actually necessary in practice. To achieve this we build
+\textbf{Coquedille, a compiler from a subset of Gallina to Cedille}, and
+probe it by translating as much as possible of the Software Foundations Series.
+
+% The main goal of this work is to determine how much these features are actually useful
+% in practice. We aim to achieve this by building \textbf{Coquedille, a compiler
+% from Coq to Cedille}.
+}
+\block{What do you mean Universe Hierarchy?}{
+Recall Russell's paradox: 
+Imagine the set of all sets that does not include itself
+$$ \Delta = \{ x \ | \ x \notin x \}$$
+The million dollar question is: $\Delta \in \Delta$?
+
+If $\Delta \in \Delta$ then $\Delta \notin \Delta$,
+conversely, if $\Delta \notin \Delta$ then $\Delta \in \Delta$!.
+This contradiction indicates that such $\bm{\Delta}$ \textbf{simply cannot exist}.
+
+This means that a sound theory needs to disallow such definitions. \textbf{One fix to this problem is to only allow definitions to quantify over terms smaller than what is being defined.}
+This gives rise to a \textit{hierarchy} of larger and larger types.
+In Coq this is Prop, Set, Type(1), Type(2), ...
+
+Another fix to this problem is to disallow these definitions altogether, resulting in a weaker theory.
+}
+
+\block{Cool, what about Large Eliminations?}{
+\textbf{Large Eliminations are function that computes types from terms.}
+The canonical example is computing a proposition from an arbitrary term, such as:
+\lstinputlisting[language=Coq]{bool_to_prop.v}
+See right for an example of these in action.
+}
+
+\block{By Datatypes you mean Algebraic Datatypes, right?}{
+Yep! Here are two cherrypicked examples for you:
+
+\begin{tabular}{ll}
+    \begin{minipage}[t]{.5\linewidth}
+        \lstinputlisting[language=Coq]{vec.v}
+    \end{minipage}
+    &
+    \begin{minipage}[t]{.5\linewidth}
+        \lstinputlisting[language=Coq]{eq.v}
+    \end{minipage}
+\end{tabular}
+
+}
+
+ \block{So you are saying this Cedille has none of this?}{
+ Exactly! Cedille has \textbf{no large eliminations}, and \textbf{no primitive datatypes}, and like Haskell and Agda,
+ \textbf{no large eliminations}, all of this implemented in an extrinsic type theory.\\
+ 
+ \textit{Ask me how can we get away without datatypes.}
+ }
+ 
+ 
+% \block{Let's talk about Coquedille}{
+% Coquedille is a translater from Coq to Cedille using metacoq
+% 
+% here we talk about useful. How far we can get with these features. What is our vehicle?
+% 
+% Well, people like Coq, so we can probe existing coq developing if they have these stuff, we have started implementing coquedille to answer this question.
+% 
+% }
+
+
+\block{Wait a second... Extrinsic Type Theory?}{
+Oh right, I knew I was forgeting something.
+There is one more important mismatch between Coq and Cedille: \textbf{Coq is an Intrinsic Type theory},
+but \textbf{Cedille is an Extrinsic Type Theory}.
+
+The key difference is that in an Intrinsic Type Theory we would write $\bm{\lambda x: T . e}$,
+ while in an Extrinsic Type Theory, it would be $\bm{\lambda x . e}$.
+I know, it seems like a minute difference but it leads to huge consequences, e.g. type uniqueness and decidability of type checking.
+In any case, this mismatch opens up the interesting question of how these two flavours of type theories will
+interact with one another soundly.
+}
+
+
+\column{.03}
+
+\column{.47}
+\block{All sounds nice and good, but do you have any results yet?}{
+
+
+\begin{tabular}[t]{p{.6\linewidth}r}
+    \begin{minipage}[t]{.9\linewidth}
+    \textbf{We implement Coquedille in Coq} itself. And we get access to the syntax of the terms by \textbf{using Metacoq}.
+    
+    
+Let me show you things working by \textbf{translating a non-trivial proof: List nil and Vector vnil are not the same}.
+
+Since we are comparing terms of two different types we cannot use 
+the regular equality, so we use the JMeq heterogeneous equality instead (notated as {\small'$\sim=$'}).
+
+    Don't waste your time trying to understand this proof! All I want you to notice is that 
+    \textbf{the highlighted part is a large elimination}.\\
+    
+    \textit{If you want to see the proof written with tactics, take a look at the project github at\footnotemark{}}
+    
+    \footnotemark{}\footnotemark{}
+    \footnotemark{}\footnotemark{}
+    \footnotemark{}\footnotemark{}
+    
+    \end{minipage}
+    &
+    \begin{minipage}[t]{0.50\linewidth}
+    \lstinputlisting[language=Coq]{nil_neq_vnil.v}
+    \end{minipage}
+\end{tabular}
+
+}
+
+
+ \block{Hey! You just said Cedille doesn't support Large Eliminations!}{
+ Preciselly! How can we translate it then?
+ We use a nice trick of translating it to
+ a Cedille term $\bm{\delta}$, which basically 
+ \textbf{checks if two lambda terms are \bm{$\beta\eta$}-equivalent} via the
+ Bohm-out algorithm. If the terms being compared are not $\beta\eta$-equivalent, $\delta$
+ allows us to apply the explosion principle to prove anything.
+ In order to do this translation, we first prove a lemma
+ relating Coq equality \lstinline[language=Coq, basicstyle=\large]{eq} to Cedille
+ built-in equality \Verb[fontsize=\normalsize]+\{x ≃ y\}+\\
+ 
+ \VerbatimInput[fontsize=\small,commandchars=+\^\&]{eqprimeq.ced}
+ 
+Now we can translate the large elimination by
+using $\delta$ on the generated proof that \lstinline[language=Coq, basicstyle=\large]{nil = cons a nil} (look at the type of H4 at the proof above).\\
+\VerbatimInput[fontsize=\small,commandchars=+\^\&]{cedille-proof.ced}
+}
+\block{Next Steps}{
+\begin{itemize}
+    \item Translate induction and recursion
+    \item Check how much of Software Foundations we are able
+    to translate even with these shortcomings
+    \item Prove the correctness of the translation
+\end{itemize}
+}
+
+\block{Questions?}{
+Insights? Inconsistencies? Doubts? Feedback?
+}
+
+% \block{Shameless Plug}{
+% I'm looking for summer internships!
+% }
+
+\block{Citations}{
+\setcounter{footnote}{0}%
+\printfootnote{ipsum} % ipsum is the text of the footnote
+    
+\printfootnote{\mbox{\url{https://github.com/pedrotst/coquedille}}}.
+}
+
+\end{columns}
+
+\end{document}

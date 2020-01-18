@@ -1,0 +1,2 @@
+eq_primeq : ∀ A : ★ . Π x : A . Π y : A . eq ·A x y ➔ { x ≃ y }
+       = Λ A . λ x . λ y . λ eq . μ' eq { eq_refl ➔ β }.

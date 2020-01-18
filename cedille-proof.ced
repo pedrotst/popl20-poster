@@ -1,0 +1,12 @@
+Vector_nil_neq_List_nil : ∀ A : ★ . Π a : A . not ·(JMeq ·(Vec ·A O) (vnil ·A)
+·(list ·A) (nil ·A)) 
+    = Λ A : ★ . λ a : A . λ H : JMeq ·(Vec ·A O) (vnil ·A)
+·(list ·A) (nil ·A) . [ H0 : Π x : Vec ·A O . Π y : Vec ·A O . eq ·(Vec ·A O) x
+y = eq_vnil ·A ] - [ H1 : JMeq ·(list ·A) (nil ·A) ·(Vec ·A O) (vnil ·A) =
+JMeq_sym ·(Vec ·A O) ·(list ·A) (vnil ·A) (nil ·A) H ] - (λ H' : JMeq ·(list ·A)
+(nil ·A) ·(Vec ·A O) (vnil ·A) . [ v : Vec ·A O = vnil ·A ] - [ T : ★ = Vec ·A O
+] - μ' H' @(λ B : ★ . λ x : B . λ _ : JMeq ·(list ·A) (nil ·A) ·B x . Π H0' : Π
+x' : B . Π y : B . eq ·B x' y . False) { | JMeq_refl ➔ λ H0' : Π x : list ·A . Π
+y : list ·A . eq ·(list ·A) x y . [ H' : eq ·(list ·A) (nil ·A) (cons ·A a (nil
+·A)) = H0' (nil ·A) (cons ·A a (nil ·A)) ] 
+- ^+color^red&δ - (eq_primeq (nil ·A) (cons ·A a (nil ·A)) H')& } H0) H1.

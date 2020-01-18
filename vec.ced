@@ -1,0 +1,4 @@
+data Vec (A : ★) : nat ➔ ★ =
+  | vnil : Vec O
+  | vcons : A ➔ Π n : nat . 
+                  Vec n ➔ Vec (S n).
